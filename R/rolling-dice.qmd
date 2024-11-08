@@ -1,0 +1,79 @@
+---
+title: "Classes"
+author: "Dave"
+format: html
+editor: visual
+---
+
+# Libraries
+
+```{r librarise}
+library(reticulate)
+```
+
+```{python modules}
+
+```
+
+# Dice
+
+Note the `_` prefix here for `_sides`. This indicates that this is a **protected attribute**. It doesn't change anything about the way the attribute is handled by Python, it's just a convention of the language. I'm getting the sense that conventions are much stronger in Python than in R.
+
+If you double-underscore an attribute (e.g.) `__bias`, then that's a **private attribute**. Python quietly mangles the names of private attributes to make them harder to access, but otherwise they are the same as everything else.
+
+```{python dice_class}
+import numpy as np
+
+class Dice:
+  
+  def __init__(self, sides = 6):
+    self._sides = sides
+  
+  def roll(self, times = 1, mod = 0):
+    
+    total = 0
+    
+    for throw in range(0, times):
+      total += (np.random.randint(1, self._sides) + mod)
+    
+    return(total)
+    
+  
+
+d6 = Dice()
+d20 = Dice(20)
+
+d6.roll()
+d20.roll()
+d6.roll(2, mod = 2)
+d20.roll(3)
+
+```
+
+### Attributes example
+
+Python pastes `_[class]` to private attributes.
+
+```{python attributes}
+class Lich:
+  
+  creatureType = "undead"
+  spellCaster = True
+  
+  def __init__(self, prepared_spells, phylactery_location):
+    self._preparedSpells = prepared_spells
+    self.__phylacteryLocation = phylactery_location
+    
+gragnought = Lich(prepared_spells = ["Detect life", "Speak with animals"], phylactery_location = "Under the sink")
+  
+gragnought.creatureType
+gragnought._preparedSpells
+
+try:
+  gragnought.__phylacteryLocation
+except AttributeError:
+  print("There is no attribute with that name")
+  
+# Instead:
+gragnought._Lich__phylacteryLocation
+```
