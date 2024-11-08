@@ -34,7 +34,9 @@ class Dice:
     total = 0
     
     for throw in range(0, times):
-      total += (np.random.randint(1, self._sides) + mod)
+      total += np.random.randint(1, self._sides)
+    
+    total += mod
     
     return(total)
     
