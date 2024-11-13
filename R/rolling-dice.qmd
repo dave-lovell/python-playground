@@ -11,8 +11,9 @@ editor: visual
 library(reticulate)
 ```
 
-```{python modules}
-
+```{python setup}
+import numpy as np
+from warnings import warn
 ```
 
 # Dice
@@ -22,8 +23,6 @@ Note the `_` prefix here for `_sides`. This indicates that this is a **protected
 If you double-underscore an attribute (e.g.) `__bias`, then that's a **private attribute**. Python quietly mangles the names of private attributes to make them harder to access, but otherwise they are the same as everything else.
 
 ```{python dice_class}
-import numpy as np
-
 class Dice:
   
   def __init__(self, sides = 6):
@@ -78,4 +77,64 @@ except AttributeError:
   
 # Instead:
 gragnought._Lich__phylacteryLocation
+```
+## Fate Characters
+
+### Fate dice
+
+```{python fate_dice}
+import numpy as np
+from warnings import warn
+
+def fate_dice(mod = 0, n = 4):
+  
+  roll = 0
+  
+  for n_rll in range(1, n):
+    roll += np.random.randint(-1, 2)
+    
+  return(roll + mod)
+
+fate_dice()
+
+class FateCharacter:
+  
+  name = ""
+  skills = {"shoot": 0, "drive": 0, "rapport": 0, "brawl": 0}
+  refresh = 3
+  
+
+  def __init__(self, name = name, refresh = refresh, skills = skills):
+    
+    self.name = name
+    self.refresh = refresh
+    self.skills = skills
+  
+  def roll(self, skill, mod = 0):
+    
+    if skill not in self.skills:
+      warn(f"{self.name} has no '{skill}' skill, using default value of 0")
+    
+    return(fate_dice(mod = self.skills.get(skill, 0)) + mod)
+  
+  def set_skill(self, skill, value):
+    self.skills[skill] = value
+    
+  def remove_skill(self, skill):
+    del self.skills[skill]
+
+
+hosea = FateCharacter("Hosea Ortiguez", skills = {"shoot":4, "rapport": 2, "ride":2, "dance":1})
+  
+hosea.roll("shoot")
+
+hosea.set_skill("psionics", 1)
+
+hosea.roll("psionics")
+
+hosea.remove_skill("rapport")
+
+hosea.roll("rapport")
+
+  
 ```
